@@ -277,6 +277,14 @@ static void *KINWebBrowserContext = &KINWebBrowserContext;
 
 #pragma mark - WKNavigationDelegate
 
+- (void)webView:(WKWebView *)webView didReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation {
+    if(webView == self.wkWebView) {
+        if([self.delegate respondsToSelector:@selector(webBrowser:didStartLoadingURL:)]) {
+            [self.delegate webBrowser:self didStartLoadingURL:self.wkWebView.URL];
+        }
+    }
+}
+
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
     if(webView == self.wkWebView) {
         [self updateToolbarState];
