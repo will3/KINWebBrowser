@@ -35,20 +35,6 @@
 
 @class KINWebBrowserViewController;
 
-/*
- 
- UINavigationController+KINWebBrowserWrapper category enables access to casted KINWebBroswerViewController when set as rootViewController of UINavigationController
- 
- */
-@interface UINavigationController(KINWebBrowser)
-
-// Returns rootViewController casted as KINWebBrowserViewController
-- (KINWebBrowserViewController *)rootWebBrowser;
-
-@end
-
-
-
 @protocol KINWebBrowserDelegate <NSObject>
 @optional
 - (void)webBrowser:(KINWebBrowserViewController *)webBrowser didStartLoadingURL:(NSURL *)URL;
@@ -57,6 +43,10 @@
 - (void)webBrowserViewControllerWillDismiss:(KINWebBrowserViewController*)viewController;
 @end
 
+@interface KINWebBrowserNavController : UINavigationController
+@property(nonatomic) UIStatusBarStyle statusBarStyle;
+- (KINWebBrowserViewController *)rootWebBrowser;
+@end
 
 /*
  
@@ -101,8 +91,8 @@
  Optionally specify KINWebBrowser options or WKWebConfiguration
  */
 
-+ (UINavigationController *)navigationControllerWithWebBrowser;
-+ (UINavigationController *)navigationControllerWithWebBrowserWithConfiguration:(WKWebViewConfiguration *)configuration NS_AVAILABLE_IOS(8_0);
++ (KINWebBrowserNavController *)navigationControllerWithWebBrowser;
++ (KINWebBrowserNavController *)navigationControllerWithWebBrowserWithConfiguration:(WKWebViewConfiguration *)configuration NS_AVAILABLE_IOS(8_0);
 
 
 @property (nonatomic, strong) UIBarButtonItem *actionButton;
@@ -111,6 +101,7 @@
 @property (nonatomic, assign) BOOL actionButtonHidden;
 @property (nonatomic, assign) BOOL showsURLInNavigationBar;
 @property (nonatomic, assign) BOOL showsPageTitleInNavigationBar;
+@property (nonatomic) BOOL alwaysHideToolbar;
 
 //Allow for custom activities in the browser by populating this optional array
 @property (nonatomic, strong) NSArray *customActivityItems;
@@ -134,6 +125,8 @@
 // Loads an string containing HTML to web view
 // Can be called any time after initialization
 - (void)loadHTMLString:(NSString *)HTMLString;
+
+- (void)installRefreshButton;
 
 @end
 

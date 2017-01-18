@@ -64,22 +64,27 @@ static void *KINWebBrowserContext = &KINWebBrowserContext;
     return webBrowserViewController;
 }
 
-+ (UINavigationController *)navigationControllerWithWebBrowser {
++ (KINWebBrowserNavController *)navigationControllerWithWebBrowser {
     KINWebBrowserViewController *webBrowserViewController = [[self alloc] initWithConfiguration:nil];
     return [KINWebBrowserViewController navigationControllerWithBrowser:webBrowserViewController];
 }
 
-+ (UINavigationController *)navigationControllerWithWebBrowserWithConfiguration:(WKWebViewConfiguration *)configuration {
++ (KINWebBrowserNavController *)navigationControllerWithWebBrowserWithConfiguration:(WKWebViewConfiguration *)configuration {
     KINWebBrowserViewController *webBrowserViewController = [[self alloc] initWithConfiguration:configuration];
     return [KINWebBrowserViewController navigationControllerWithBrowser:webBrowserViewController];
 }
 
-+ (UINavigationController *)navigationControllerWithBrowser:(KINWebBrowserViewController *)webBrowser {
++ (KINWebBrowserNavController *)navigationControllerWithBrowser:(KINWebBrowserViewController *)webBrowser {
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:webBrowser action:@selector(doneButtonPressed:)];
     [webBrowser.navigationItem setRightBarButtonItem:doneButton];
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:webBrowser];
+    KINWebBrowserNavController *navigationController = [[KINWebBrowserNavController alloc] initWithRootViewController:webBrowser];
     return navigationController;
+}
+
+- (void)installRefreshButton {
+    UIBarButtonItem *refreshButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refreshButtonPressed:)];
+    self.navigationItem.rightBarButtonItem = refreshButton;
 }
 
 #pragma mark - Initializers
@@ -155,8 +160,13 @@ static void *KINWebBrowserContext = &KINWebBrowserContext;
     [super viewWillAppear:animated];
     
     [self.navigationController setNavigationBarHidden:NO animated:YES];
-    [self.navigationController setToolbarHidden:NO animated:YES];
     
+    if (self.alwaysHideToolbar) {
+        [self.navigationController setToolbarHidden:YES animated:NO];
+    } else {
+        [self.navigationController setToolbarHidden:NO animated:YES];
+    }
+
     [self.navigationController.navigationBar addSubview:self.progressView];
     
     [self updateToolbarState];
@@ -167,7 +177,9 @@ static void *KINWebBrowserContext = &KINWebBrowserContext;
     
     [self.navigationController setNavigationBarHidden:self.previousNavigationControllerNavigationBarHidden animated:animated];
     
-    [self.navigationController setToolbarHidden:self.previousNavigationControllerToolbarHidden animated:animated];
+    if (!self.alwaysHideToolbar) {
+        [self.navigationController setToolbarHidden:self.previousNavigationControllerToolbarHidden animated:animated];
+    }
     
     [self.uiWebView setDelegate:nil];
     [self.progressView removeFromSuperview];
@@ -637,11 +649,15 @@ static void *KINWebBrowserContext = &KINWebBrowserContext;
 
 @end
 
-@implementation UINavigationController(KINWebBrowser)
+@implementation KINWebBrowserNavController
 
 - (KINWebBrowserViewController *)rootWebBrowser {
     UIViewController *rootViewController = [self.viewControllers objectAtIndex:0];
     return (KINWebBrowserViewController *)rootViewController;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return self.statusBarStyle;
 }
 
 @end
