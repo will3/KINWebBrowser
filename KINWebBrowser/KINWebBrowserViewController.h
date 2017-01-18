@@ -102,6 +102,7 @@
 @property (nonatomic, assign) BOOL showsURLInNavigationBar;
 @property (nonatomic, assign) BOOL showsPageTitleInNavigationBar;
 @property (nonatomic) BOOL alwaysHideToolbar;
+@property (nonatomic, strong) NSString *overrideTitle;
 
 //Allow for custom activities in the browser by populating this optional array
 @property (nonatomic, strong) NSArray *customActivityItems;

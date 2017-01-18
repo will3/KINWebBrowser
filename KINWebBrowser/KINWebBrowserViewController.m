@@ -394,7 +394,7 @@ static void *KINWebBrowserContext = &KINWebBrowserContext;
             URLString = [URLString stringByReplacingOccurrencesOfString:@"http://" withString:@""];
             URLString = [URLString stringByReplacingOccurrencesOfString:@"https://" withString:@""];
             URLString = [URLString substringToIndex:[URLString length]-1];
-            self.navigationItem.title = URLString;
+            self.navigationItem.title = self.overrideTitle ?: URLString;
         }
     }
     else {
@@ -402,10 +402,10 @@ static void *KINWebBrowserContext = &KINWebBrowserContext;
         
         if(self.showsPageTitleInNavigationBar) {
             if(self.wkWebView) {
-                self.navigationItem.title = self.wkWebView.title;
+                self.navigationItem.title = self.overrideTitle ?: self.wkWebView.title;
             }
             else if(self.uiWebView) {
-                self.navigationItem.title = [self.uiWebView stringByEvaluatingJavaScriptFromString:@"document.title"];
+                self.navigationItem.title = self.overrideTitle ?: [self.uiWebView stringByEvaluatingJavaScriptFromString:@"document.title"];
             }
         }
     }
